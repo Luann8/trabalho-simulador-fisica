@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Lançamento de Projéteis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #2249b4af;
+      }
+    
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fafafaef;
+      border-radius: 20px;
+      box-shadow: 0px 0px 20px rgba(53, 53, 53, 0.658);
+    }
+    
+    h1 {
+      margin: 0;
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+    
+    canvas {
+      display: block;
+      margin: 0 auto 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #000;
+      border-radius: 8px;
+    }
+    
+    .controls-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px; /* Espaçamento entre os elementos */
+    }
+    
+    .controls,
+    .options,
+    .info {
+      width: 100%;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 0px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .controls h2,
+    .options h2,
+    .info h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 1.2em;
+    }
+    
+    .label-group {
+      margin-bottom: 20px;
+    }
+    
+    .label-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: #555;
+    }
+    
+    .input-group {
+      display: flex;
+      align-items: center;
+    }
+    
+    .input-group input[type="number"],
+    .input-group input[type="range"] {
+      flex: 1;
+      padding: 8px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    button {
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px; /* Tamanho dos botões ajustado */
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    
+    .checkbox-group {
+      margin-bottom: 20px;
+    }
+    
+    .checkbox-group .checkbox-label {
+      margin-right: 20px;
+      color: #555;
+    }
+    
+    .checkbox-group .checkbox-label input {
+      margin-right: 5px;
+    }
+    
+    .info-container {
+      text-align: center;
+    }
+    
+    .info p {
+      margin-bottom: 5px;
+    }
+
+    @media only screen and (max-width: 768px) {
+      canvas {
+        width: 100%; /* Ocupa toda a largura disponível */
+        max-width: 300px; /* Largura máxima */
+      }
+    
+      .controls,
+      .options,
+      .info {
+        padding: 10px; /* Reduz padding */
+      }
+    
+      .input-group input[type="number"],
+      .input-group input[type="range"] {
+        width: 80%; /* Reduz a largura dos inputs */
+      }
+    
+      button {
+        width: 45%; /* Reduz a largura dos botões */
+        margin: 5px; /* Adiciona um pequeno espaçamento entre os botões */
+      }
+    }
+  
+  </style>
+</head>
+<body onload="clearCanvas()">
+  <div class="container">
+  <h1>Simulador de Lançamento de Projéteis</h1>
+    <canvas id="canvas" width="500" height="300"></canvas>
+    <div class="controls-container">
+      <div class="controls">
+        <h2>Controles</h2>
+        <label for="angleInput">Ângulo (graus):</label>
+        <input type="number" id="angleInput" value="60" min="0" max="90">
+        <input type="range" id="angleRange" min="0" max="90" step="1"><br>
+        <label for="velocityInput">Velocidade inicial (m/s):</label>
+        <input type="number" id="velocityInput" value="70">
+        <input type="range" id="velocityRange" min="0" max="100" step="1"><br>
+        <label for="heightInput">Altura inicial (m):</label>
+        <input type="number" id="heightInput" value="250">
+        <input type="range" id="heightRange" min="0" max="500" step="1"><br>
+        <label for="gravityInput">Gravidade (m/s²):</label>
+        <input type="number" id="gravityInput" value="25">
+        <input type="range" id="gravityRange" min="0" max="50" step="1"><br>
+        <label for="moveInput">Movimento lateral (m):</label>
+        <input type="number" id="moveInput" value="0">
+        <input type="range" id="moveRange" min="-250" max="250" step="1">
+      </div>
+      <div class="options">
+        <h2>Opções</h2>
+        <div class="checkbox-label">
+          <input type="checkbox" id="projectionXCheckbox" checked>
+          <label for="projectionXCheckbox">🟢 Projeção no eixo x </label>
+        </div>
+        <div class="checkbox-label">
+          <input type="checkbox" id="projectionYCheckbox" checked>
+          <label for="projectionYCheckbox">🔵 Projeção no eixo y </label>
+        </div>
+
+        <div class="checkbox-label">
+          <input type="checkbox" id="velocityVectorCheckbox" checked>
+          <label for="velocityVectorCheckbox">🟡 Vetor velocidade </label>
+        </div>
+        <div class="checkbox-label">
+          <input type="checkbox" id="trajectoryCheckbox" checked>
+          <label for="trajectoryCheckbox">🔴 Trajetória </label>
+        </div>
+        <div class="checkbox-label">
+          <input type="checkbox" id="gridCheckbox" checked>
+          <label for="gridCheckbox">📈 Grid </label>
+        </div>
+      </div>
+    </div>
+    <br>
+    
+    <button id="startButton">Iniciar</button>
+    <button id="clearButton">Limpar</button>
+    <br>
+    <br>
+    <div class="controls-container">
+      <div class="options">
+        
+        <h2>Informações</h2>
+        <p id="timeInfo">Tempo (t): </p>
+        <p id="xInfo">Posição no eixo x (x): </p>
+        <p id="yInfo">Posição no eixo y (y): </p>
+        <p id="vyInfo">Velocidade vertical (vy): </p>
+        <p id="xyInfo">Distância percorrida (xy): </p>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    let intervalId;
+    let launched = false;
+    let trajectoryPoints = [];
+
+    function updateInputs() {
+      angleInput.value = angleRange.value;
+      velocityInput.value = velocityRange.value;
+      heightInput.value = heightRange.value;
+      gravityInput.value = gravityRange.value;
+      moveInput.value = moveRange.value;
+    }
+
+    angleRange.addEventListener('input', updateInputs);
+    velocityRange.addEventListener('input', updateInputs);
+    heightRange.addEventListener('input', updateInputs);
+    gravityRange.addEventListener('input', updateInputs);
+    moveRange.addEventListener('input', updateInputs);
+
+    function simulate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const gravity = parseFloat(gravityInput.value); // m/s^2
+      const initialX = canvas.width / 2 + parseInt(moveInput.value); // Mover o ponto de lançamento lateralmente
+      const initialY = canvas.height - parseInt(heightInput.value); // Ajustar a altura inicial do projétil
+      const timeStep = 0.05; // Segundo
+
+      let angle = parseFloat(angleInput.value);
+      let velocity = parseFloat(velocityInput.value);
+      let x = initialX;
+      let y = initialY;
+      let velocityX = velocity * Math.cos(angle * Math.PI / 180);
+      let velocityY = velocity * Math.sin(angle * Math.PI / 180);
+      launched = true;
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (gridCheckbox.checked) drawGrid();
+        if (trajectoryCheckbox.checked) drawTrajectory();
+        drawVelocity();
+        drawProjections();
+        printEnergy();
+
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function drawGrid() {
+        ctx.strokeStyle = '#ddd';
+        ctx.lineWidth = 1;
+
+        for (let i = 0; i < canvas.width; i += 20) {
+          ctx.beginPath();
+          ctx.moveTo(i, 0);
+          ctx.lineTo(i, canvas.height);
+          ctx.stroke();
+        }
+
+        for (let i = 0; i < canvas.height; i += 20) {
+          ctx.beginPath();
+          ctx.moveTo(0, i);
+          ctx.lineTo(canvas.width, i);
+          ctx.stroke();
+        }
+      }
+
+      function drawTrajectory() {
+        ctx.strokeStyle = '#f00';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(initialX, initialY);
+
+        for (let i = 0; i < trajectoryPoints.length; i++) {
+          ctx.lineTo(trajectoryPoints[i].x, trajectoryPoints[i].y);
+        }
+
+        ctx.stroke();
+      }
+
+      function drawVelocity() {
+        ctx.strokeStyle = '#ff0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(initialX, initialY);
+        ctx.lineTo(initialX + velocityX * 10, initialY - velocityY * 10);
+        ctx.stroke();
+      }
+
+      function drawProjections() {
+        ctx.strokeStyle = '#00f';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(initialX, initialY);
+        ctx.lineTo(initialX + (canvas.width - initialX) * 2, initialY);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#0f0';
+        ctx.beginPath();
+        ctx.moveTo(initialX, initialY);
+        ctx.lineTo(initialX, initialY + (canvas.height - initialY) * 2);
+        ctx.stroke();
+      }
+
+      function printEnergy() {
+        const kineticEnergy = 0.5 * velocityX ** 2 + 0.5 * velocityY ** 2;
+        const gravitationalPotentialEnergy = gravity * (canvas.height - y); // Ajuste para começar em 0
+        const totalEnergy = kineticEnergy + gravitationalPotentialEnergy;
+
+        ctx.fillStyle = '#000';
+        ctx.fillText("Energia cinética: " + kineticEnergy.toFixed(2) + " J", 10, 20); // Ajuste da posição do texto
+        ctx.fillText("Energia potencial gravitacional: " + gravitationalPotentialEnergy.toFixed(2) + " J", 10, 40); // Ajuste da posição do texto
+        ctx.fillText("Energia total: " + totalEnergy.toFixed(2) + " J", 10, 60); // Ajuste da posição do texto
+      }
+
+      function update() {
+        velocityY -= gravity * timeStep;
+
+        x += velocityX * timeStep;
+        y -= velocityY * timeStep;
+
+        if (y > canvas.height || x < 0 || x > canvas.width) {
+          clearInterval(intervalId);
+          intervalId = null;
+          launched = false;
+          return;
+        }
+
+        trajectoryPoints.push({ x: x, y: y });
+
+        draw();
+        printInfo(x, y, velocityY);
+      }
+
+      intervalId = setInterval(update, timeStep * 1000);
+    }
+
+    function startSimulation() {
+      if (!launched) {
+        trajectoryPoints = [];
+        simulate();
+      }
+    }
+
+    function clearCanvas() {
+      clearInterval(intervalId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      trajectoryPoints = [];
+      launched = false;
+
+      // Limpar os campos de informações
+      document.getElementById("timeInfo").textContent = "Tempo (t) = ";
+      document.getElementById("xInfo").textContent = "Posição no eixo x (x) = ";
+      document.getElementById("yInfo").textContent = "Posição no eixo y (y) = ";
+      document.getElementById("vyInfo").textContent = "Velocidade vertical (vy) = ";
+      document.getElementById("xyInfo").textContent = "Distância percorrida (xy) = ";
+    }
+
+    function printInfo(x, y, velocityY) {
+      const time = (trajectoryPoints.length - 1) * 0.05; // Tempo em segundos
+      const vy = -velocityY;
+      const xy = Math.sqrt(x ** 2 + y ** 2);
+
+      document.getElementById("timeInfo").textContent = "Tempo (t) = " + time.toFixed(2) + "s";
+      document.getElementById("xInfo").textContent = "Posição no eixo x (x) = " + x.toFixed(2) + "m";
+      document.getElementById("yInfo").textContent = "Posição no eixo y (y) = " + y.toFixed(2) + "m";
+      document.getElementById("vyInfo").textContent = "Velocidade vertical (vy) = " + vy.toFixed(2) + "m/s";
+      document.getElementById("xyInfo").textContent = "Distância percorrida (xy) = " + xy.toFixed(2) + "m";
+    }
+
+    startButton.addEventListener('click', startSimulation);
+    clearButton.addEventListener('click', clearCanvas);
+
+    updateInputs(); // Para garantir que os valores iniciais estejam corretos
+
+    simulate();
+  </script>
+</body>
+</html>
