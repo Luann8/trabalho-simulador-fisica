@@ -161,11 +161,11 @@
         <input type="number" id="velocityInput" value="70">
         <input type="range" id="velocityRange" min="0" max="100" step="1"><br>
         <label for="heightInput">Altura inicial (m):</label>
-        <input type="number" id="heightInput" value="250">
-        <input type="range" id="heightRange" min="0" max="500" step="1"><br>
+        <input type="number" id="heightInput" value="125">
+        <input type="range" id="heightRange" min="0" max="250" step="1"><br>
         <label for="gravityInput">Gravidade (m/s²):</label>
-        <input type="number" id="gravityInput" value="25">
-        <input type="range" id="gravityRange" min="0" max="50" step="1"><br>
+        <input type="number" id="gravityInput" value="10">
+        <input type="range" id="gravityRange" min="0" max="20" step="1"><br>
         <label for="moveInput">Movimento lateral (m):</label>
         <input type="number" id="moveInput" value="0">
         <input type="range" id="moveRange" min="-250" max="250" step="1">
@@ -394,6 +394,35 @@
     updateInputs(); // Para garantir que os valores iniciais estejam corretos
 
     simulate();
+  
+    // Função para atualizar os valores das barras de rolagem quando os campos de entrada forem alterados
+    angleInput.addEventListener('input', function() {
+      angleRange.value = angleInput.value;
+      
+    });
+
+    velocityInput.addEventListener('input', function() {
+      velocityRange.value = velocityInput.value;
+      
+    });
+
+    heightInput.addEventListener('input', function() {
+      heightRange.value = heightInput.value;
+      
+    });
+
+    gravityInput.addEventListener('input', function() {
+      gravityRange.value = gravityInput.value;
+      
+    });
+
+    moveInput.addEventListener('input', function() {
+      moveRange.value = moveInput.value;
+      
+    });
+
+
+
   </script>
 </body>
 </html>
