@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <link rel="icon" href="https://raw.githubusercontent.com/Luann8/trabalho-simulador-fisica/main/OIG3.jpg?token=GHSAT0AAAAAACSGCV2TCUXVBN7KU7MWBTNKZSZBSYA" type="image/jpg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador de Lançamento de Projéteis</title>
@@ -9,8 +10,8 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #2249b4af;
-      }
+      background-color: #000e33;
+    }
     
     .container {
       max-width: 800px;
@@ -40,7 +41,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px; /* Espaçamento entre os elementos */
+      gap: 20px;
     }
     
     .controls,
@@ -92,7 +93,7 @@
       color: white;
       border: none;
       border-radius: 4px;
-      padding: 8px 16px; /* Tamanho dos botões ajustado */
+      padding: 8px 16px;
       font-size: 14px;
       transition: background-color 0.3s ease;
     }
@@ -124,26 +125,34 @@
 
     @media only screen and (max-width: 768px) {
       canvas {
-        width: 100%; /* Ocupa toda a largura disponível */
-        max-width: 300px; /* Largura máxima */
+        width: 100%;
+        max-width: 300px;
       }
     
       .controls,
       .options,
       .info {
-        padding: 10px; /* Reduz padding */
+        padding: 10px;
       }
     
       .input-group input[type="number"],
       .input-group input[type="range"] {
-        width: 80%; /* Reduz a largura dos inputs */
+        width: 80%;
       }
     
       button {
-        width: 45%; /* Reduz a largura dos botões */
-        margin: 5px; /* Adiciona um pequeno espaçamento entre os botões */
+        width: 45%;
+        margin: 5px;
       }
     }
+    footer {
+      background-color: #f1f1f1;
+      text-align: center;
+      padding: 10px 0;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+  }
   
   </style>
 </head>
@@ -174,36 +183,32 @@
         <h2>Opções</h2>
         <div class="checkbox-label">
           <input type="checkbox" id="projectionXCheckbox" checked>
-          <label for="projectionXCheckbox">🟢 Projeção no eixo x </label>
+          <label for="projectionXCheckbox">🟢 Projeção no eixo x</label>
         </div>
         <div class="checkbox-label">
           <input type="checkbox" id="projectionYCheckbox" checked>
-          <label for="projectionYCheckbox">🔵 Projeção no eixo y </label>
+          <label for="projectionYCheckbox">🔵 Projeção no eixo y</label>
         </div>
-
         <div class="checkbox-label">
           <input type="checkbox" id="velocityVectorCheckbox" checked>
-          <label for="velocityVectorCheckbox">🟡 Vetor velocidade </label>
+          <label for="velocityVectorCheckbox">🟡 Vetor velocidade</label>
         </div>
         <div class="checkbox-label">
           <input type="checkbox" id="trajectoryCheckbox" checked>
-          <label for="trajectoryCheckbox">🔴 Trajetória </label>
+          <label for="trajectoryCheckbox">🔴 Trajetória</label>
         </div>
         <div class="checkbox-label">
           <input type="checkbox" id="gridCheckbox" checked>
-          <label for="gridCheckbox">📈 Grid </label>
+          <label for="gridCheckbox">📈 Grid</label>
         </div>
       </div>
     </div>
     <br>
-    
     <button id="startButton">Iniciar</button>
     <button id="clearButton">Limpar</button>
-    <br>
-    <br>
+    <br><br>
     <div class="controls-container">
       <div class="options">
-        
         <h2>Informações</h2>
         <p id="timeInfo">Tempo (t): </p>
         <p id="xInfo">Posição no eixo x (x): </p>
@@ -213,7 +218,10 @@
       </div>
     </div>
   </div>
-
+  <footer>
+    <p>&copy; 2024.</p>
+    <p>Desenvolvido por estudantes do 3º período de Engenharia de Software da <a href="https://univassouras.edu.br/graduacoes/engenharia-de-software/" target="_blank">Univassouras</a>.</p>
+</footer>
 
   <script>
     const canvas = document.getElementById("canvas");
@@ -323,8 +331,9 @@
       }
 
       function printEnergy() {
-        const kineticEnergy = 0.5 * velocityX ** 2 + 0.5 * velocityY ** 2;
-        const gravitationalPotentialEnergy = gravity * (canvas.height - y); // Ajuste para começar em 0
+        const mass = 1; // Assuming a mass of 1 kg for simplicity
+        const kineticEnergy = 0.5 * mass * (velocityX ** 2 + velocityY ** 2);
+        const gravitationalPotentialEnergy = mass * gravity * (canvas.height - y); // Ajuste para começar em 0
         const totalEnergy = kineticEnergy + gravitationalPotentialEnergy;
 
         ctx.fillStyle = '#000';
@@ -394,35 +403,27 @@
     updateInputs(); // Para garantir que os valores iniciais estejam corretos
 
     simulate();
-  
+
     // Função para atualizar os valores das barras de rolagem quando os campos de entrada forem alterados
     angleInput.addEventListener('input', function() {
       angleRange.value = angleInput.value;
-      
     });
 
     velocityInput.addEventListener('input', function() {
       velocityRange.value = velocityInput.value;
-      
     });
 
     heightInput.addEventListener('input', function() {
       heightRange.value = heightInput.value;
-      
     });
 
     gravityInput.addEventListener('input', function() {
       gravityRange.value = gravityInput.value;
-      
     });
 
     moveInput.addEventListener('input', function() {
       moveRange.value = moveInput.value;
-      
     });
-
-
-
   </script>
 </body>
 </html>
